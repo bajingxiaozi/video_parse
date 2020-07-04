@@ -66,9 +66,10 @@ public class VideoDownloadHelper {
 
         Pattern pattern = Pattern.compile("[\\\\/:*?\"<>|]");
         String fixFileName = pattern.matcher(videoInfo.getDescription()).replaceAll("");
-        boolean renameResult = tempFile.renameTo(getNextFile(new File(directory, fixFileName + ".mp4")));
+        File fixFile = getNextFile(new File(directory, fixFileName + ".mp4"));
+        boolean renameResult = tempFile.renameTo(fixFile);
 
-        listener.onParse("rename from " + tempFile + " to " + fixFileName + " " + renameResult);
+        listener.onParse("rename from " + tempFile + " to " + fixFile + " " + renameResult);
     }
 
 }
