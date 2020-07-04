@@ -27,6 +27,7 @@ public class DouyinVideoParse implements IVideoParse {
             parseListener.onParse("getVideoId()->body.string():" + content);
             // {"url_list":["https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0200f700000bruluaclbum6m7vf96hg&ratio=720p&line=0"],
             Matcher videoIdMatcher = Pattern.compile("[\\s\\S]+video_id=(?<videoId>[\\w]+)[\\s\\S]+").matcher(content);
+            // "desc":"#原相机 #双马尾 这个夏天这么热 咱们早晚都会熟的"
             Matcher videoDescriptionMatcher = Pattern.compile("[\\s\\S]*\"desc\":[ ]*\"(?<description>[^\"]+)\"[\\s\\S]*").matcher(content);
             if (videoIdMatcher.matches() && videoDescriptionMatcher.matches()) {
                 String videoId = videoIdMatcher.group("videoId");
