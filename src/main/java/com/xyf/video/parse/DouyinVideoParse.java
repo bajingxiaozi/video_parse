@@ -43,7 +43,7 @@ public class DouyinVideoParse implements IVideoParse {
             }
         }
 
-        parseListener.onParse("getVideoId()->error:" + videoFakeId);
+        parseListener.onParse("getVideoInfoWithVideoFakeId()->error:" + videoFakeId);
         throw new IllegalStateException("can't get video id. video=" + videoFakeId);
     }
 
