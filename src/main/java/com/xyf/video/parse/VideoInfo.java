@@ -1,3 +1,5 @@
+package com.xyf.video.parse;
+
 import java.util.List;
 
 public class VideoInfo {

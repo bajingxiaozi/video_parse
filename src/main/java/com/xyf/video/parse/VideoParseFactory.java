@@ -1,3 +1,5 @@
+package com.xyf.video.parse;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -10,6 +12,10 @@ public class VideoParseFactory {
             try {
                 IVideoParse videoLink = pars.newInstance();
                 videoLink.setParseListener(listener);
+                if (!videoLink.handler(link)) {
+                    continue;
+                }
+
                 return videoLink.getVideoInfo(link);
             } catch (Exception e) {
                 listener.onParse(e.toString());

@@ -1,12 +1,12 @@
-plugins {
-    id 'java'
-}
+apply plugin: 'java'
 apply plugin: 'maven'
-
-group = 'com.github.bajingxiaozi'
 
 repositories {
     mavenCentral()
+}
+
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
 }
 
 dependencies {

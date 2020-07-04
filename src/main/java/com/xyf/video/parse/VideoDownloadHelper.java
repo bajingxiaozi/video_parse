@@ -1,7 +1,9 @@
-import okhttp3.OkHttpClient;
+package com.xyf.video.parse;
+
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 
 import java.io.*;
@@ -24,6 +26,26 @@ public class VideoDownloadHelper {
             if (!tempFile.exists()) {
                 return tempFile;
             }
+
+            index++;
+        }
+    }
+
+    private static File getNextFile(File file) {
+        if (!file.exists()) {
+            return file;
+        }
+
+        String baseName = FilenameUtils.getBaseName(file.getName());
+        String extension = FilenameUtils.getExtension(file.getName());
+        int index = 2;
+        while (true) {
+            File fixFile = new File(file.getParentFile(), baseName + " " + index + "." + extension);
+            if (!fixFile.exists()) {
+                return fixFile;
+            }
+
+            index++;
         }
     }
 
@@ -44,7 +66,7 @@ public class VideoDownloadHelper {
 
         Pattern pattern = Pattern.compile("[\\\\/:*?\"<>|]");
         String fixFileName = pattern.matcher(videoInfo.getDescription()).replaceAll("");
-        boolean renameResult = tempFile.renameTo(new File(directory, fixFileName + ".mp4"));
+        boolean renameResult = tempFile.renameTo(getNextFile(new File(directory, fixFileName + ".mp4")));
 
         listener.onParse("rename from " + tempFile + " to " + fixFileName + " " + renameResult);
     }
