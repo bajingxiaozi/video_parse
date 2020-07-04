@@ -49,7 +49,7 @@ public class VideoDownloadHelper {
         }
     }
 
-    private void download(File directory) throws Exception {
+    public void download(File directory) throws Exception {
         VideoInfo videoInfo = VideoParseFactory.parse(link, listener);
 
         Request request = new Request.Builder()
