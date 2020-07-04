@@ -5,6 +5,7 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
 import java.util.regex.Pattern;
@@ -60,12 +61,16 @@ public class VideoDownloadHelper {
         File tempFile = getNextTempFile(directory);
         tempFile.deleteOnExit();
 
-        try (OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tempFile)); ResponseBody body = response.body(); InputStream inputStream = IOUtils.toBufferedInputStream(body.byteStream())) {
-            IOUtils.copy(inputStream, outputStream);
+        try (OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tempFile)); ResponseBody body = response.body()) {
+            if (body != null) {
+                InputStream inputStream = IOUtils.toBufferedInputStream(body.byteStream());
+                IOUtils.copy(inputStream, outputStream);
+            }
         }
 
         Pattern pattern = Pattern.compile("[\\\\/:*?\"<>|]");
         String fixFileName = pattern.matcher(videoInfo.getDescription()).replaceAll("");
+        fixFileName = StringUtils.defaultIfEmpty(fixFileName, "video");
         File fixFile = getNextFile(new File(directory, fixFileName + ".mp4"));
         boolean renameResult = tempFile.renameTo(fixFile);
 
