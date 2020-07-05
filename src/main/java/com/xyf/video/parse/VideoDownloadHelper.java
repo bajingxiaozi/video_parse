@@ -82,8 +82,8 @@ public class VideoDownloadHelper {
         String fixFileName = pattern.matcher(videoInfo.getDescription()).replaceAll("");
         fixFileName = StringUtils.defaultIfEmpty(fixFileName, "video");
         File fixFile = getNextFile(new File(directory, fixFileName + ".mp4"));
-        boolean renameResult = tempFile.renameTo(fixFile);
-        if (!renameResult) {
+        boolean renameSuccess = tempFile.renameTo(fixFile);
+        if (!renameSuccess) {
             throw new IOException("rename failed from->" + tempFile + "->" + fixFile);
         }
 
