@@ -65,11 +65,13 @@ public class VideoDownloadHelper {
         File tempFile = getNextTempFile(directory);
         tempFile.deleteOnExit();
 
-        try (OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tempFile)); ResponseBody body = response.body()) {
+        try (FileOutputStream outputStream = new FileOutputStream(tempFile); ResponseBody body = response.body()) {
             if (body != null) {
                 InputStream inputStream = IOUtils.toBufferedInputStream(body.byteStream());
-                IOUtils.copy(inputStream, outputStream);
+                IOUtils.copy(inputStream, new BufferedOutputStream(outputStream));
             }
+
+            outputStream.getFD().sync();
         }
 
         if (tempFile.length() == 0) {
