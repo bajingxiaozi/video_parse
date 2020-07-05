@@ -53,14 +53,17 @@ public class DouyinVideoParse implements IVideoParse {
                 .url(url)
                 .build();
         Response response = HttpUtils2.provideOkHttpClient().newCall(request).execute();
-        parseListener.onParse("getVideoFakeId()->response.code():" + response.code());
-        String redirectUrl = response.request().url().url().toExternalForm();
-        parseListener.onParse("getVideoFakeId()->redirectUrl:" + response.code());
-        Matcher matcher = Pattern.compile(".*video/(?<video>\\d+)/.*").matcher(redirectUrl);
-        if (matcher.matches()) {
-            String video = matcher.group("video");
-            parseListener.onParse("getVideoFakeId()->video:" + video);
-            return video;
+
+        try (ResponseBody body = response.body()) {
+            parseListener.onParse("getVideoFakeId()->response.code():" + response.code());
+            String redirectUrl = response.request().url().url().toExternalForm();
+            parseListener.onParse("getVideoFakeId()->redirectUrl:" + response.code());
+            Matcher matcher = Pattern.compile(".*video/(?<video>\\d+)/.*").matcher(redirectUrl);
+            if (matcher.matches()) {
+                String video = matcher.group("video");
+                parseListener.onParse("getVideoFakeId()->video:" + video);
+                return video;
+            }
         }
 
         parseListener.onParse("getVideoFakeId()->error:" + url);
