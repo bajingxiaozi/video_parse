@@ -1,28 +1,24 @@
 package com.xyf.video.parse;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class VideoParseFactory {
 
-    private static final List<Class<? extends IVideoParse>> PARSES = Arrays.asList(DouyinVideoParse.class);
+    private static final List<Class<? extends IVideoParse>> PARSES = Collections.singletonList(DouyinVideoParse.class);
 
-    public static VideoInfo parse(String link, IVideoParse.ParseListener listener) throws Exception {
+    public static VideoInfo parse(String link) throws Exception {
         for (Class<? extends IVideoParse> pars : PARSES) {
-            try {
-                IVideoParse videoLink = pars.newInstance();
-                videoLink.setParseListener(listener);
-                if (!videoLink.handler(link)) {
-                    continue;
-                }
-
-                return videoLink.getVideoInfo(link);
-            } catch (Exception e) {
-                listener.onParse(e.toString());
+            IVideoParse videoLink = pars.newInstance();
+            if (!videoLink.handler(link)) {
+                continue;
             }
+
+            return videoLink.getVideoInfo(link);
         }
 
-        throw new IllegalStateException("can't find available video parse. link:" + link);
+        throw new IllegalStateException("can't find available video parse. link->" + link);
     }
 
 }

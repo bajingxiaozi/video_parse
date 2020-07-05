@@ -13,11 +13,9 @@ import java.util.regex.Pattern;
 public class VideoDownloadHelper {
 
     private final String link;
-    private final IVideoParse.ParseListener listener;
 
-    public VideoDownloadHelper(String link, IVideoParse.ParseListener listener) {
+    public VideoDownloadHelper(String link) {
         this.link = link;
-        this.listener = listener;
     }
 
     private static File getNextTempFile(File directory) {
@@ -51,7 +49,7 @@ public class VideoDownloadHelper {
     }
 
     public VideoInfo download(File directory) throws Exception {
-        VideoInfo videoInfo = VideoParseFactory.parse(link, listener);
+        VideoInfo videoInfo = VideoParseFactory.parse(link);
 
         Request request = new Request.Builder()
                 .url(videoInfo.getDownloadLink())
@@ -86,8 +84,6 @@ public class VideoDownloadHelper {
         if (!renameSuccess) {
             throw new IOException("rename failed from->" + tempFile + "->" + fixFile);
         }
-
-        listener.onParse("rename success from->" + tempFile + "->" + fixFile);
 
         return videoInfo;
     }

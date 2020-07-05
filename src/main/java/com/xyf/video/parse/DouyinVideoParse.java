@@ -15,68 +15,56 @@ public class DouyinVideoParse implements IVideoParse {
     }
 
     private VideoInfo getVideoInfoWithVideoFakeId(String videoFakeId) throws IOException {
-        parseListener.onParse("getVideoInfoWithVideoFakeId()->:" + videoFakeId);
-        final String url = "https://www.iesdouyin.com/web/api/v2/aweme/iteminfo/?item_ids=" + videoFakeId;
         Request request = new Request.Builder()
-                .url(url)
+                .url("https://www.iesdouyin.com/web/api/v2/aweme/iteminfo/?item_ids=" + videoFakeId)
                 .build();
         Response response = HttpUtils2.provideOkHttpClient().newCall(request).execute();
 
         if (!response.isSuccessful()) {
-            throw new IOException("error response->" + url + "->" + response.code());
+            throw new IOException("error response->" + request + "->" + response);
         }
 
         try (ResponseBody body = response.body()) {
-            parseListener.onParse("getVideoInfoWithVideoFakeId()->response.code():" + response.code());
             if (body == null) {
-                parseListener.onParse("getVideoInfoWithVideoFakeId()->error:" + videoFakeId);
-                throw new IOException("can't get video id. video=" + videoFakeId);
+                throw new IOException("error ResponseBody->" + request);
             }
 
             String content = body.string();
-            parseListener.onParse("getVideoInfoWithVideoFakeId()->body.string():" + content);
             // {"url_list":["https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0200f700000bruluaclbum6m7vf96hg&ratio=720p&line=0"],
             Matcher videoIdMatcher = Pattern.compile("[\\s\\S]+video_id=(?<videoId>[\\w]+)[\\s\\S]+").matcher(content);
-            // "desc":"#原相机 #双马尾 这个夏天这么热 咱们早晚都会熟的"
-            Matcher videoDescriptionMatcher = Pattern.compile("[\\s\\S]*\"desc\":[ ]*\"(?<description>[^\"]+)\"[\\s\\S]*").matcher(content);
-            if (videoIdMatcher.matches() && videoDescriptionMatcher.matches()) {
+
+            if (videoIdMatcher.matches()) {
                 String videoId = videoIdMatcher.group("videoId");
-                parseListener.onParse("getVideoInfoWithVideoFakeId()->videoId:" + videoId);
-                String videoDescription = videoDescriptionMatcher.group("description");
-                parseListener.onParse("getVideoInfoWithVideoFakeId()->videoDescription:" + videoDescription);
+
+                // "desc":"#原相机 #双马尾 这个夏天这么热 咱们早晚都会熟的"
+                Matcher videoDescriptionMatcher = Pattern.compile("[\\s\\S]*\"desc\":[ ]*\"(?<description>[^\"]+)\"[\\s\\S]*").matcher(content);
+                String videoDescription = videoDescriptionMatcher.matches() ? videoDescriptionMatcher.group("description") : "下载";
                 return new VideoInfo(getDownloadLink(videoId), videoDescription);
             }
         }
 
-        parseListener.onParse("getVideoInfoWithVideoFakeId()->error:" + videoFakeId);
-        throw new IOException("can't get video id. video=" + videoFakeId);
+        throw new IOException("can't get video id->" + request);
     }
 
     private String getVideoFakeId(String url) throws Exception {
-        parseListener.onParse("getVideoFakeId()->:" + url);
         Request request = new Request.Builder()
                 .url(url)
                 .build();
         Response response = HttpUtils2.provideOkHttpClient().newCall(request).execute();
 
         if (!response.isSuccessful()) {
-            throw new IOException("error response->" + url + "->" + response.code());
+            throw new IOException("error response->" + request + "->" + response);
         }
 
         try (ResponseBody body = response.body()) {
-            parseListener.onParse("getVideoFakeId()->response.code():" + response.code());
             String redirectUrl = response.request().url().url().toExternalForm();
-            parseListener.onParse("getVideoFakeId()->redirectUrl:" + response.code());
             Matcher matcher = Pattern.compile(".*video/(?<video>\\d+)/.*").matcher(redirectUrl);
             if (matcher.matches()) {
-                String video = matcher.group("video");
-                parseListener.onParse("getVideoFakeId()->video:" + video);
-                return video;
+                return matcher.group("video");
             }
         }
 
-        parseListener.onParse("getVideoFakeId()->error:" + url);
-        throw new IOException("can't get video fake id. url=" + url);
+        throw new IOException("can't get video fake id->" + request);
     }
 
     @Override
@@ -86,17 +74,9 @@ public class DouyinVideoParse implements IVideoParse {
     }
 
     @Override
-    public void setParseListener(ParseListener listener) {
-        parseListener = listener;
-    }
-
-    @Override
     public boolean handler(String link) {
         // https://v.douyin.com/JLQFYhN/
         return Pattern.compile(".+v[.]douyin[.]com.+").matcher(link).matches();
     }
-
-    private ParseListener parseListener = message -> {
-    };
 
 }
