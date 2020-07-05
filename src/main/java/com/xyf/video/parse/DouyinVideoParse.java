@@ -16,16 +16,21 @@ public class DouyinVideoParse implements IVideoParse {
 
     private VideoInfo getVideoInfoWithVideoFakeId(String videoFakeId) throws IOException {
         parseListener.onParse("getVideoInfoWithVideoFakeId()->:" + videoFakeId);
+        final String url = "https://www.iesdouyin.com/web/api/v2/aweme/iteminfo/?item_ids=" + videoFakeId;
         Request request = new Request.Builder()
-                .url("https://www.iesdouyin.com/web/api/v2/aweme/iteminfo/?item_ids=" + videoFakeId)
+                .url(url)
                 .build();
         Response response = HttpUtils2.provideOkHttpClient().newCall(request).execute();
+
+        if (!response.isSuccessful()) {
+            throw new IOException("error response->" + url + "->" + response.code());
+        }
 
         try (ResponseBody body = response.body()) {
             parseListener.onParse("getVideoInfoWithVideoFakeId()->response.code():" + response.code());
             if (body == null) {
                 parseListener.onParse("getVideoInfoWithVideoFakeId()->error:" + videoFakeId);
-                throw new IllegalStateException("can't get video id. video=" + videoFakeId);
+                throw new IOException("can't get video id. video=" + videoFakeId);
             }
 
             String content = body.string();
@@ -44,7 +49,7 @@ public class DouyinVideoParse implements IVideoParse {
         }
 
         parseListener.onParse("getVideoInfoWithVideoFakeId()->error:" + videoFakeId);
-        throw new IllegalStateException("can't get video id. video=" + videoFakeId);
+        throw new IOException("can't get video id. video=" + videoFakeId);
     }
 
     private String getVideoFakeId(String url) throws Exception {
@@ -53,6 +58,10 @@ public class DouyinVideoParse implements IVideoParse {
                 .url(url)
                 .build();
         Response response = HttpUtils2.provideOkHttpClient().newCall(request).execute();
+
+        if (!response.isSuccessful()) {
+            throw new IOException("error response->" + url + "->" + response.code());
+        }
 
         try (ResponseBody body = response.body()) {
             parseListener.onParse("getVideoFakeId()->response.code():" + response.code());
@@ -67,7 +76,7 @@ public class DouyinVideoParse implements IVideoParse {
         }
 
         parseListener.onParse("getVideoFakeId()->error:" + url);
-        throw new IllegalStateException("can't get video fake id. url=" + url);
+        throw new IOException("can't get video fake id. url=" + url);
     }
 
     @Override

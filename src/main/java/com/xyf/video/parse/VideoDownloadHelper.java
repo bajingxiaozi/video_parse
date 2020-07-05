@@ -58,6 +58,10 @@ public class VideoDownloadHelper {
                 .build();
         Response response = HttpUtils2.provideOkHttpClient().newCall(request).execute();
 
+        if (!response.isSuccessful()) {
+            throw new IOException("error response->" + link + "->" + response.code());
+        }
+
         File tempFile = getNextTempFile(directory);
         tempFile.deleteOnExit();
 
@@ -66,6 +70,10 @@ public class VideoDownloadHelper {
                 InputStream inputStream = IOUtils.toBufferedInputStream(body.byteStream());
                 IOUtils.copy(inputStream, outputStream);
             }
+        }
+
+        if (tempFile.length() == 0) {
+            throw new IOException("save file failed->" + tempFile);
         }
 
         Pattern pattern = Pattern.compile("[\\\\/:*?\"<>|]");
