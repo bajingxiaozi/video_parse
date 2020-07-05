@@ -50,7 +50,7 @@ public class VideoDownloadHelper {
         }
     }
 
-    public void download(File directory) throws Exception {
+    public VideoInfo download(File directory) throws Exception {
         VideoInfo videoInfo = VideoParseFactory.parse(link, listener);
 
         Request request = new Request.Builder()
@@ -75,6 +75,8 @@ public class VideoDownloadHelper {
         boolean renameResult = tempFile.renameTo(fixFile);
 
         listener.onParse("rename from " + tempFile + " to " + fixFile + " " + renameResult);
+
+        return videoInfo;
     }
 
 }
