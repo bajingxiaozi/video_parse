@@ -57,18 +57,18 @@ public class VideoDownloadHelper {
         Response response = HttpUtils2.provideOkHttpClient().newCall(request).execute();
 
         if (!response.isSuccessful()) {
-            throw new IOException("error response->" + link + "->" + response.code());
+            throw new IOException("error response->" + request + "->" + response);
         }
 
         File tempFile = getNextTempFile(directory);
-        tempFile.deleteOnExit();
 
         try (FileOutputStream outputStream = new FileOutputStream(tempFile); ResponseBody body = response.body()) {
-            if (body != null) {
-                InputStream inputStream = IOUtils.toBufferedInputStream(body.byteStream());
-                IOUtils.copy(inputStream, new BufferedOutputStream(outputStream));
+            if (body == null) {
+                throw new IOException("error ResponseBody->" + request + "->" + response);
             }
 
+            InputStream inputStream = IOUtils.toBufferedInputStream(body.byteStream());
+            IOUtils.copy(inputStream, new BufferedOutputStream(outputStream));
             outputStream.getFD().sync();
         }
 
