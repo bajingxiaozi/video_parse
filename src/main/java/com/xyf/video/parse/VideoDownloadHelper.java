@@ -48,11 +48,15 @@ public class VideoDownloadHelper {
         }
     }
 
-    public VideoInfo download(File directory) throws Exception {
-        VideoInfo videoInfo = VideoParseFactory.parse(link);
+    public LinkInfo download(File directory) throws Exception {
+        LinkInfo linkInfo = VideoParseFactory.parse(link);
+
+        if (!linkInfo.isVideo()) {
+            return linkInfo;
+        }
 
         Request request = new Request.Builder()
-                .url(videoInfo.getDownloadLink())
+                .url(linkInfo.getVideoDownloadLink())
                 .build();
         Response response = HttpUtils2.provideOkHttpClient().newCall(request).execute();
 
@@ -77,7 +81,7 @@ public class VideoDownloadHelper {
         }
 
         Pattern pattern = Pattern.compile("[\\\\/:*?\"<>|]");
-        String fixFileName = pattern.matcher(videoInfo.getDescription()).replaceAll("");
+        String fixFileName = pattern.matcher(linkInfo.getDescription()).replaceAll("");
         fixFileName = StringUtils.defaultIfEmpty(fixFileName, "video");
         File fixFile = getNextFile(new File(directory, fixFileName + ".mp4"));
         boolean renameSuccess = tempFile.renameTo(fixFile);
@@ -85,7 +89,7 @@ public class VideoDownloadHelper {
             throw new IOException("rename failed from->" + tempFile + "->" + fixFile);
         }
 
-        return videoInfo;
+        return linkInfo;
     }
 
 }

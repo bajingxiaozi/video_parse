@@ -34,7 +34,7 @@ public class HttpUtils2 {
         public Response intercept(@NotNull Chain chain) throws IOException {
             Request request = chain.request()
                     .newBuilder()
-                    .addHeader("user-agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1")
+                    .addHeader("User-Agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1")
                     .build();
             return chain.proceed(request);
         }

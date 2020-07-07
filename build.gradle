@@ -16,6 +16,7 @@ dependencies {
     compile group: 'commons-io', name: 'commons-io', version: '2.6'
     // https://mvnrepository.com/artifact/com.google.guava/guava
     compile group: 'com.google.guava', name: 'guava', version: '29.0-jre'
+    implementation 'com.google.code.gson:gson:2.8.6'
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {

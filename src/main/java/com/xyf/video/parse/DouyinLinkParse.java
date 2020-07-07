@@ -8,13 +8,13 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class DouyinVideoParse implements IVideoParse {
+public class DouyinLinkParse implements ILinkParse {
 
     private static String getDownloadLink(String videoId) {
         return "https://aweme.snssdk.com/aweme/v1/play/?video_id=" + videoId + "&ratio=720p&line=0";
     }
 
-    private VideoInfo getVideoInfoWithVideoFakeId(String videoFakeId) throws IOException {
+    private LinkInfo getVideoInfoWithVideoFakeId(String videoFakeId) throws IOException {
         Request request = new Request.Builder()
                 .url("https://www.iesdouyin.com/web/api/v2/aweme/iteminfo/?item_ids=" + videoFakeId)
                 .build();
@@ -38,10 +38,9 @@ public class DouyinVideoParse implements IVideoParse {
             }
 
             String videoId = videoIdMatcher.group("videoId");
-            // "desc":"#原相机 #双马尾 这个夏天这么热 咱们早晚都会熟的"
             Matcher videoDescriptionMatcher = Pattern.compile("[\\s\\S]*\"desc\":[ ]*\"(?<description>[^\"]+)\"[\\s\\S]*").matcher(content);
             String videoDescription = videoDescriptionMatcher.matches() ? videoDescriptionMatcher.group("description") : "下载";
-            return new VideoInfo(getDownloadLink(videoId), videoDescription);
+            return new LinkInfo(true, getDownloadLink(videoId), videoDescription);
         }
 
     }
@@ -68,7 +67,7 @@ public class DouyinVideoParse implements IVideoParse {
     }
 
     @Override
-    public VideoInfo getVideoInfo(String link) throws Exception {
+    public LinkInfo getLinkInfo(String link) throws Exception {
         String videoFakeId = getVideoFakeId(link);
         return getVideoInfoWithVideoFakeId(videoFakeId);
     }
