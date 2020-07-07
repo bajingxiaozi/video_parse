@@ -4,7 +4,7 @@ import java.util.List;
 
 public class LinksBean {
 
-    public static class Link{
+    public static class Link {
 
         public String link;
     }

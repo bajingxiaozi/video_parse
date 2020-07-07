@@ -10,12 +10,12 @@ public class VideoParseFactory {
 
     public static LinkInfo parse(@Nonnull String link) throws Exception {
         for (Class<? extends ILinkParse> pars : PARSES) {
-            ILinkParse videoParse = pars.newInstance();
-            if (!videoParse.canHandler(link)) {
+            ILinkParse linkParse = pars.newInstance();
+            if (!linkParse.canHandler(link)) {
                 continue;
             }
 
-            return videoParse.getLinkInfo(link);
+            return linkParse.getLinkInfo(link);
         }
 
         throw new IllegalArgumentException("can't find available video parse. link->" + link);
