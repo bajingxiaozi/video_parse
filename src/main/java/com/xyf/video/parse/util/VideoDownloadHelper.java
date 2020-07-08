@@ -59,12 +59,11 @@ public class VideoDownloadHelper {
     public LinkInfo download(@Nonnull File directory) throws Exception {
         Lg.d(TAG, "download", directory, "[" + link + "]");
 
-        Matcher matcher = Pattern.compile(".*(?<realLink>(http|https)://[a-zA-Z:./0-9]+)[\\s\\S]*").matcher(link);
-        if (!matcher.matches()) {
+        if (!HttpUtils2.isLink(link)) {
             throw new IllegalArgumentException("not a link->" + link);
         }
 
-        LinkInfo linkInfo = VideoParseFactory.parse(matcher.group("realLink"));
+        LinkInfo linkInfo = VideoParseFactory.parse(HttpUtils2.getLink(link));
 
         Lg.d(TAG, "download", link, linkInfo);
 

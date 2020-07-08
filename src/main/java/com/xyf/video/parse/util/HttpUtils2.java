@@ -8,6 +8,8 @@ import okhttp3.Response;
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class HttpUtils2 {
 
@@ -43,6 +45,22 @@ public class HttpUtils2 {
             return chain.proceed(request);
         }
 
+    }
+
+    private static final Pattern LINK_PATTERN =  Pattern.compile(".*(?<realLink>(http|https)://[a-zA-Z:./0-9]+)[\\s\\S]*");
+
+    public static boolean isLink(@Nonnull String link){
+        Matcher matcher =LINK_PATTERN.matcher(link);
+        return matcher.matches();
+    }
+
+    public static String getLink(@Nonnull String link){
+        Matcher matcher =LINK_PATTERN.matcher(link);
+        if(matcher.matches()){
+            return matcher.group("realLink");
+        }
+
+        throw new IllegalArgumentException("not a link->" + link);
     }
 
 }
