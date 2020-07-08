@@ -59,11 +59,7 @@ public class VideoDownloadHelper {
     public LinkInfo download(@Nonnull File directory) throws Exception {
         Lg.d(TAG, "download", directory, "[" + link + "]");
 
-        if (!HttpUtils2.isLink(link)) {
-            throw new IllegalArgumentException("not a link->" + link);
-        }
-
-        LinkInfo linkInfo = VideoParseFactory.parse(HttpUtils2.getLink(link));
+        LinkInfo linkInfo = VideoParseFactory.parse(link);
 
         Lg.d(TAG, "download", link, linkInfo);
 
