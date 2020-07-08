@@ -1,20 +1,27 @@
-package com.xyf.video.parse;
+package com.xyf.video.parse.util;
 
+import com.xyf.video.parse.LinkInfo;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.annotation.Nonnull;
 import java.io.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class VideoDownloadHelper {
 
+    private static final String TAG = "VideoDownloadHelper";
+
+    @Nonnull
     private final String link;
 
-    public VideoDownloadHelper(String link) {
+    public VideoDownloadHelper(@Nonnull String link) {
         this.link = link;
     }
 
@@ -48,8 +55,18 @@ public class VideoDownloadHelper {
         }
     }
 
-    public LinkInfo download(File directory) throws Exception {
-        LinkInfo linkInfo = VideoParseFactory.parse(link);
+    @Nonnull
+    public LinkInfo download(@Nonnull File directory) throws Exception {
+        Lg.d(TAG, "download", directory, "[" + link + "]");
+
+        Matcher matcher = Pattern.compile(".*(?<realLink>(http|https)://[a-zA-Z:./0-9]+)[\\s\\S]*").matcher(link);
+        if (!matcher.matches()) {
+            throw new IllegalArgumentException("not a link->" + link);
+        }
+
+        LinkInfo linkInfo = VideoParseFactory.parse(matcher.group("realLink"));
+
+        Lg.d(TAG, "download", link, linkInfo);
 
         if (!linkInfo.isVideo()) {
             return linkInfo;
@@ -60,19 +77,20 @@ public class VideoDownloadHelper {
                 .build();
         Response response = HttpUtils2.provideOkHttpClient().newCall(request).execute();
 
+        Lg.d(TAG, "download", request, response);
+
         if (!response.isSuccessful()) {
             throw new IOException("error response->" + request + "->" + response);
         }
 
         File tempFile = getNextTempFile(directory);
-
+        FileUtils.forceMkdirParent(tempFile);
         try (FileOutputStream outputStream = new FileOutputStream(tempFile); ResponseBody body = response.body()) {
             if (body == null) {
                 throw new IOException("error ResponseBody->" + request + "->" + response);
             }
 
-            InputStream inputStream = IOUtils.toBufferedInputStream(body.byteStream());
-            IOUtils.copy(inputStream, new BufferedOutputStream(outputStream));
+            IOUtils.copy(IOUtils.toBufferedInputStream(body.byteStream()), new BufferedOutputStream(outputStream));
             outputStream.getFD().sync();
         }
 
@@ -83,8 +101,12 @@ public class VideoDownloadHelper {
         Pattern pattern = Pattern.compile("[\\\\/:*?\"<>|]");
         String fixFileName = pattern.matcher(linkInfo.getDescription()).replaceAll("");
         fixFileName = StringUtils.defaultIfEmpty(fixFileName, "video");
+        fixFileName = fixFileName.substring(0, Math.min(fixFileName.length(), 100));
         File fixFile = getNextFile(new File(directory, fixFileName + ".mp4"));
         boolean renameSuccess = tempFile.renameTo(fixFile);
+
+        Lg.d(TAG, "download", tempFile, fixFile, renameSuccess);
+
         if (!renameSuccess) {
             throw new IOException("rename failed from->" + tempFile + "->" + fixFile);
         }

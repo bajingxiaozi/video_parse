@@ -1,5 +1,9 @@
 package com.xyf.video.parse;
 
+import com.google.common.base.Objects;
+
+import java.util.StringJoiner;
+
 public class LinkInfo {
 
     private final boolean isVideo;
@@ -22,6 +26,15 @@ public class LinkInfo {
 
     public boolean isVideo() {
         return isVideo;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", LinkInfo.class.getSimpleName() + "[", "]")
+                .add("isVideo=" + isVideo)
+                .add("videoDownloadLink='" + videoDownloadLink + "'")
+                .add("description='" + description + "'")
+                .toString();
     }
 
 }

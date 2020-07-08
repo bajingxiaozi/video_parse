@@ -1,21 +1,29 @@
 package com.xyf.video.parse;
 
+import com.xyf.video.parse.util.HttpUtils2;
+import com.xyf.video.parse.util.Lg;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class KuaishouLinkParse implements ILinkParse {
 
+    private static final String TAG = "KuaishouLinkParse";
+
+    @Nonnull
     @Override
-    public LinkInfo getLinkInfo(String link) throws Exception {
+    public LinkInfo getLinkInfo(@Nonnull String link) throws Exception {
         Request request = new Request.Builder()
                 .url(link)
                 .build();
         Response response = HttpUtils2.provideOkHttpClient().newCall(request).execute();
+
+        Lg.d(TAG, "getLinkInfo", request, response);
 
         if (!response.isSuccessful()) {
             throw new IOException("error response->" + request + "->" + response);
@@ -26,13 +34,14 @@ public class KuaishouLinkParse implements ILinkParse {
                 throw new IOException("error ResponseBody->" + request + "->" + response);
             }
 
-            String content = body.string();
+            String content = body.string().replaceAll("&#34;", "\"");
+            Lg.d(TAG, "getLinkInfo", request, content);
 
-            if (content.contains("长图分享")) {
+            if (content.contains("长图分享") || content.contains("图集分享") || content.contains("单图分享")) {
                 return new LinkInfo(false, null, null);
             }
 
-            if (content.contains("请进行安全验证")) {
+            if (content.contains("请进行安全验")) {
                 throw new IOException("need user security check->" + request + "->" + response);
             }
 
