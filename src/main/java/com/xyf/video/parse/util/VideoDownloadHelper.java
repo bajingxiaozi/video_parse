@@ -93,10 +93,7 @@ public class VideoDownloadHelper {
             throw new IOException("save file failed->" + tempFile);
         }
 
-        Pattern pattern = Pattern.compile("[\\\\/:*?\"<>|]");
-        String fixFileName = pattern.matcher(linkInfo.getDescription()).replaceAll("");
-        fixFileName = StringUtils.defaultIfEmpty(fixFileName, "video");
-        fixFileName = fixFileName.substring(0, Math.min(fixFileName.length(), 80));
+        String fixFileName = StringUtils.defaultIfEmpty(FileNameUtils.normalize(linkInfo.getDescription()), "video");
         File fixFile = getNextFile(new File(directory, fixFileName + ".mp4"));
         boolean renameSuccess = tempFile.renameTo(fixFile);
 
