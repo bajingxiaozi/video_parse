@@ -47,7 +47,7 @@ public class DouyinLinkParse implements ILinkParse {
             }
 
             String videoId = videoIdMatcher.group("videoId");
-            Matcher videoDescriptionMatcher = Pattern.compile("[\\s\\S]*\"desc\":[ ]*\"(?<description>[^\"]+)\"[\\s\\S]*").matcher(content);
+            Matcher videoDescriptionMatcher = Pattern.compile("[\\s\\S]*\"share_title\":[ ]*\"(?<description>[^\"]+)\"[\\s\\S]*").matcher(content);
             String videoDescription = videoDescriptionMatcher.matches() ? videoDescriptionMatcher.group("description") : "下载";
             return new LinkInfo(true, getDownloadLink(videoId), videoDescription);
         }
