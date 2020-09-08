@@ -1,7 +1,5 @@
 package com.xyf.video.parse;
 
-import com.google.common.base.Objects;
-
 import java.util.StringJoiner;
 
 public class LinkInfo {
@@ -9,11 +7,13 @@ public class LinkInfo {
     private final boolean isVideo;
     private final String videoDownloadLink;
     private final String description;
+    private final String author;
 
-    public LinkInfo(boolean isVideo, String videoDownloadLink, String description) {
+    public LinkInfo(boolean isVideo, String videoDownloadLink, String description, String author) {
         this.isVideo = isVideo;
         this.videoDownloadLink = videoDownloadLink;
         this.description = description;
+        this.author = author;
     }
 
     public String getVideoDownloadLink() {
@@ -28,13 +28,8 @@ public class LinkInfo {
         return isVideo;
     }
 
-    @Override
-    public String toString() {
-        return new StringJoiner(", ", LinkInfo.class.getSimpleName() + "[", "]")
-                .add("isVideo=" + isVideo)
-                .add("videoDownloadLink='" + videoDownloadLink + "'")
-                .add("description='" + description + "'")
-                .toString();
+    public String getAuthor() {
+        return author;
     }
 
 }

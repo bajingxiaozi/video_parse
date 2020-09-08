@@ -38,7 +38,7 @@ public class KuaishouLinkParse implements ILinkParse {
             Lg.d(TAG, "getLinkInfo", request, content);
 
             if (content.contains("长图分享") || content.contains("图集分享") || content.contains("单图分享")) {
-                return new LinkInfo(false, null, null);
+                return new LinkInfo(false, null, null, "未知");
             }
 
             if (content.contains("请进行安全验")) {
@@ -54,7 +54,10 @@ public class KuaishouLinkParse implements ILinkParse {
 
             Matcher titleMatcher = Pattern.compile("[\\s\\S]*\"title\" *: *\"(?<title>[^\"]+)\"[\\s\\S]*").matcher(content);
             String videoDescription = titleMatcher.matches() ? titleMatcher.group("title") : "下载";
-            return new LinkInfo(true, linkMatcher.group("link"), videoDescription);
+
+            Matcher nameMatcher = Pattern.compile("[\\s\\S]*\"name\" *: *\"(?<name>[^\"]+)\"[\\s\\S]*").matcher(content);
+            String name = nameMatcher.matches() ? nameMatcher.group("name") : "未知";
+            return new LinkInfo(true, linkMatcher.group("link"), videoDescription, "name");
         }
     }
 

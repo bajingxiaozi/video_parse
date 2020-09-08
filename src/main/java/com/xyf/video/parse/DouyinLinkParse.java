@@ -49,7 +49,10 @@ public class DouyinLinkParse implements ILinkParse {
             String videoId = videoIdMatcher.group("videoId");
             Matcher videoDescriptionMatcher = Pattern.compile("[\\s\\S]*\"share_title\":[ ]*\"(?<description>[^\"]+)\"[\\s\\S]*").matcher(content);
             String videoDescription = videoDescriptionMatcher.matches() ? videoDescriptionMatcher.group("description") : "下载";
-            return new LinkInfo(true, getDownloadLink(videoId), videoDescription);
+
+            Matcher authorNameMatcher = Pattern.compile("[\\s\\S]*\"nickname\":[ ]*\"(?<nickname>[^\"]+)\"[\\s\\S]*").matcher(content);
+            String authorName = authorNameMatcher.matches() ? authorNameMatcher.group("nickname") : "未知";
+            return new LinkInfo(true, getDownloadLink(videoId), videoDescription, authorName);
         }
 
     }
