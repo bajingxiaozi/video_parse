@@ -95,6 +95,7 @@ public class VideoDownloadHelper {
 
         String fixFileName = StringUtils.defaultIfEmpty(FileNameUtils.normalize(linkInfo.getDescription()), "video");
         File fixFile = getNextFile(FileUtils.getFile(directory, linkInfo.getAuthor(), fixFileName + ".mp4"));
+        FileUtils.forceMkdirParent(fixFile);
         boolean renameSuccess = tempFile.renameTo(fixFile);
 
         Lg.d(TAG, "download", tempFile, fixFile, renameSuccess);
