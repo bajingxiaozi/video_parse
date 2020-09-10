@@ -57,7 +57,7 @@ public class KuaishouLinkParse implements ILinkParse {
 
             Matcher nameMatcher = Pattern.compile("[\\s\\S]*\"name\" *: *\"(?<name>[^\"]+)\"[\\s\\S]*").matcher(content);
             String name = nameMatcher.matches() ? nameMatcher.group("name") : "未知";
-            return new LinkInfo(true, linkMatcher.group("link"), videoDescription, "name");
+            return new LinkInfo(true, linkMatcher.group("link"), videoDescription, name);
         }
     }
 
