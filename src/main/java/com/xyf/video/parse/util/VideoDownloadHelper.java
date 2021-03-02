@@ -93,8 +93,9 @@ public class VideoDownloadHelper {
             throw new IOException("save file failed->" + tempFile);
         }
 
+        String fixAuthorName = StringUtils.defaultIfEmpty(FileNameUtils.normalize(linkInfo.getAuthor()), "author");
         String fixFileName = StringUtils.defaultIfEmpty(FileNameUtils.normalize(linkInfo.getDescription()), "video");
-        File fixFile = getNextFile(FileUtils.getFile(directory, linkInfo.getAuthor(), fixFileName + ".mp4"));
+        File fixFile = getNextFile(FileUtils.getFile(directory, fixAuthorName, fixFileName + ".mp4"));
         FileUtils.forceMkdirParent(fixFile);
         boolean renameSuccess = tempFile.renameTo(fixFile);
 
