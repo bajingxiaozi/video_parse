@@ -85,7 +85,7 @@ public class VideoDownloadHelper {
                 throw new IOException("error ResponseBody->" + request + "->" + response);
             }
 
-            IOUtils.copy(IOUtils.toBufferedInputStream(body.byteStream()), new BufferedOutputStream(outputStream));
+            IOUtils.copy(body.byteStream(), new BufferedOutputStream(outputStream));
             outputStream.getFD().sync();
         }
 
